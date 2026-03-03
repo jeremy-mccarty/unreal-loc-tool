@@ -45,24 +45,24 @@ jobs:
       - name: Build Linux AppImage
         if: runner.os == 'Linux'
         run: |
-          pyinstaller --noconfirm --onefile --name CSVtoJSON app/main.py
+          pyinstaller --noconfirm --onefile --name UnrealLocTool app/main.py
 
           # AppDir structure
           mkdir -p AppDir/usr/bin
-          cp dist/CSVtoJSON AppDir/usr/bin/
+          cp dist/UnrealLocTool AppDir/usr/bin/
 
           mkdir -p AppDir/usr/share/applications
           echo "[Desktop Entry]
-          Name=CSVtoJSON
-          Exec=CSVtoJSON
-          Icon=CSVtoJSON
+          Name=UnrealLocTool
+          Exec=UnrealLocTool
+          Icon=UnrealLocTool
           Terminal=true
           Type=Application
-          Categories=Utility;" > AppDir/usr/share/applications/CSVtoJSON.desktop
+          Categories=Utility;" > AppDir/usr/share/applications/UnrealLocTool.desktop
 
           # Icon from repo
           mkdir -p AppDir/usr/share/icons/hicolor/256x256/apps
-          cp assets/CSVtoJSON.png AppDir/usr/share/icons/hicolor/256x256/apps/
+          cp assets/UnrealLocTool.png AppDir/usr/share/icons/hicolor/256x256/apps/
 
           # Download linuxdeploy
           wget https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
@@ -70,28 +70,28 @@ jobs:
 
           # Build AppImage
           ./linuxdeploy-x86_64.AppImage --appdir AppDir --output appimage
-          mv CSVtoJSON*.AppImage release/CSVtoJSON-linux.AppImage
+          mv UnrealLocTool*.AppImage release/UnrealLocTool-linux.AppImage
 
       # ---------------- Windows build ----------------
       - name: Build Windows executable
         if: runner.os == 'Windows'
         run: |
-          pyinstaller --noconfirm --onefile --name CSVtoJSON app/main.py
-          copy dist\CSVtoJSON.exe release\CSVtoJSON-Windows.exe
+          pyinstaller --noconfirm --onefile --name UnrealLocTool app/main.py
+          copy dist\UnrealLocTool.exe release\UnrealLocTool-Windows.exe
         shell: powershell
 
       # ---------------- macOS build ----------------
       - name: Build macOS executable
         if: runner.os == 'macOS'
         run: |
-          pyinstaller --noconfirm --onefile --name CSVtoJSON app/main.py
-          cp dist/CSVtoJSON release/CSVtoJSON-macOS
+          pyinstaller --noconfirm --onefile --name UnrealLocTool app/main.py
+          cp dist/UnrealLocTool release/UnrealLocTool-macOS
 
       # ---------------- Upload artifact ----------------
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: csvtojson-${{ runner.os }}
+          name: UnrealLocTool-${{ runner.os }}
           path: release/
 
   release:
@@ -106,19 +106,19 @@ jobs:
       - name: Download Linux artifact
         uses: actions/download-artifact@v4
         with:
-          name: csvtojson-Linux
+          name: UnrealLocTool-Linux
           path: release/
 
       - name: Download Windows artifact
         uses: actions/download-artifact@v4
         with:
-          name: csvtojson-Windows
+          name: UnrealLocTool-Windows
           path: release/
 
       - name: Download macOS artifact
         uses: actions/download-artifact@v4
         with:
-          name: csvtojson-macOS
+          name: UnrealLocTool-macOS
           path: release/
 
       - name: List release artifacts
