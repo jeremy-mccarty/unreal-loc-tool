@@ -1,0 +1,3 @@
+Namespace,Key,Source,Translation,SourceLocation
+LocalizedStrings,start_button,Start Game,Démarrer le jeu,/Game/Content/StringTables/ST_LocalizedStrings.ST_LocalizedStrings
+LocalizedStrings,quit_button,Quit Game,Quitter le jeu,/Game/Content/StringTables/ST_LocalizedStrings.ST_LocalizedStrings

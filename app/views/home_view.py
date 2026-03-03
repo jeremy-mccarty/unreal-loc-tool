@@ -40,17 +40,35 @@ class HomeView(ttk.Frame):
         )
 
         # ---------------- Convert Buttons ----------------
-        ttk.Button(self, text="Convert CSV → PO", command=lambda: (self.convert)).grid(
+        ttk.Button(self, text="Convert CSV → PO", command=self.convert).grid(
             row=3, column=0, sticky="ew", pady=tall_padding
         )
         ttk.Button(
-            self, text="Convert PO → CSV", command=lambda: (self.convert(False))
+            self, text="Convert PO → CSV", command=lambda: self.convert(False)
         ).grid(row=3, column=1, sticky="ew", pady=tall_padding, padx=left_padding)
 
+        # ---------------- Folder Path ----------------
+        self.folder_path = tk.StringVar()
+        ttk.Button(
+            self,
+            text="Select Folder Path",
+            command=self.select_folder,
+        ).grid(row=4, column=0, sticky="ew", pady=short_padding)
+
+        # Entry showing the path
+        ttk.Entry(self, textvariable=self.file_path).grid(
+            row=4, column=1, sticky="ew", padx=left_padding, pady=short_padding
+        )
+
+        # ---------------- Batch Convert Button ----------------
+        ttk.Button(self, text="Batch Convert PO → CSV", command=self.batch_convert).grid(
+            row=5, column=0, columnspan=2, sticky="ew", pady=tall_padding
+        )
+
         # ---------------- Output log ----------------
-        ttk.Label(self, text="Output Log:").grid(row=4, column=0, sticky="w")
+        ttk.Label(self, text="Output Log:").grid(row=6, column=0, sticky="w")
         self.log_text_area = tk.Text(self, wrap="word", state="disabled")
-        self.log_text_area.grid(row=5, column=0, columnspan=2, sticky="nsew")
+        self.log_text_area.grid(row=7, column=0, columnspan=2, sticky="nsew")
 
     def convert(self, csv_to_po=True):
         file_path = self.file_path.get()
@@ -65,6 +83,16 @@ class HomeView(ttk.Frame):
 
         self.log(result)
 
+    def batch_convert(self, csv_to_po=True):
+        folder_path = self.folder_path.get()
+        if not folder_path:
+            self.log("No folder selected")
+            return
+
+        result = ult.batch_convert_recursive(folder_path)
+        
+        self.log(result)
+
     def select_path(self):
         file_path = filedialog.askopenfilename(
             title=f"Select input file",
@@ -77,6 +105,16 @@ class HomeView(ttk.Frame):
 
         self.file_path.set(file_path)
         self.log(f"Set file path: {file_path}")
+
+    def select_folder(self):
+        folder_path = filedialog.askdirectory(title=f"Select folder")
+
+        if not folder_path:
+            self.log("No folder selected")
+            return
+
+        self.folder_path.set(folder_path)
+        self.log(f"Set folder path: {folder_path}")
 
     def log(self, message):
         self.log_text_area.configure(state="normal")

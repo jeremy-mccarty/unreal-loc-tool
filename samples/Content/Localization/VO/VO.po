@@ -1,0 +1,15 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Unreal Project\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: sample\n"
+"POT-Creation-Date: 2026-03-03 18:56+0000\n"
+
+#. Key: npc_greeting
+#. SourceLocation: /Game/Core/StringTables/ST_LocalizedStrings.ST_LocalizedStrings
+#: /Game/Core/StringTables/ST_LocalizedStrings.ST_LocalizedStrings
+msgctxt "LocalizedStrings,npc_greeting"
+msgid "Hello traveler!"
+msgstr "Bonjour voyageur !"
+

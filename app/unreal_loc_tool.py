@@ -61,21 +61,24 @@ def csv_to_po(csv_path, output_dir=None, project_name="Unreal Project"):
             translation = row["Translation"]
             location = row.get("SourceLocation", "")
 
-            combined_key = f"{namespace}.{key}"
+            combined_key = f"{namespace},{key}"
 
             if combined_key in seen_keys:
                 raise ValueError(f"Duplicate key detected: {combined_key}")
 
             seen_keys.add(combined_key)
 
+            # Write commented out metadata
+            pofile.write(f"#. Key: {key}\n")
             if location:
                 pofile.write(f"#. SourceLocation: {location}\n")
+                pofile.write(f"#: {location}\n")
 
             pofile.write(f'msgctxt "{combined_key}"\n')
             pofile.write(f'msgid "{escape_po(source)}"\n')
             pofile.write(f'msgstr "{escape_po(translation)}"\n\n')
-            
-    result =f"Generated {output_path}"
+
+    result = f"Generated {output_path}"
     print(result)
     return result
 
@@ -91,18 +94,24 @@ def po_to_csv(po_path, output_path=None):
 
     rows = []
 
-    with open(po_path, encoding="utf-8") as pofile:
+    with open(po_path, encoding="utf-8") as po:
         namespace = key = source = translation = location = ""
+        skip_header = True  # flag to ignore the header block
 
-        for line in pofile:
+        for line in po:
             line = line.strip()
+            if skip_header:
+                # Header always starts with msgid "" and ends at the first empty #. Key:
+                if line.startswith('#. Key:'):
+                    skip_header = False
+                continue  # skip everything until header ends
 
             if line.startswith("#. SourceLocation:"):
                 location = line.replace("#. SourceLocation:", "").strip()
 
             elif line.startswith("msgctxt"):
                 combined = line.split('"')[1]
-                namespace, key = combined.split(".", 1)
+                namespace, key = combined.split(",", 1)
 
             elif line.startswith("msgid"):
                 source = line.split('"')[1]
@@ -125,8 +134,8 @@ def po_to_csv(po_path, output_path=None):
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
         writer.writeheader()
         writer.writerows(rows)
-        
-    result =f"Generated {output_path}"
+
+    result = f"Generated {output_path}"
     print(result)
     return result
 
@@ -140,6 +149,27 @@ def batch_convert(folder_path, output_dir=None):
     for file in os.listdir(folder_path):
         if file.endswith(".csv"):
             csv_to_po(os.path.join(folder_path, file), output_dir)
+            
+def batch_convert_recursive(folder_path, output_dir=None):
+    
+    for root, dirs, files in os.walk(folder_path):
+        for file in files:
+            if file.endswith(".po"):
+                po_path = os.path.join(root, file)
+
+                # Optional: maintain relative folder structure in output
+                if output_dir:
+                    # compute relative path from folder_path
+                    rel_path = os.path.relpath(root, folder_path)
+                    po_output_dir = os.path.join(output_dir, rel_path)
+                else:
+                    po_output_dir = None
+
+                po_to_csv(po_path, po_output_dir)
+                
+    result = f"Generated folder"
+    print(result)
+    return result
 
 
 # ----------------------------
