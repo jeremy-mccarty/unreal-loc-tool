@@ -29,3 +29,4 @@ release/
 .DS_Store
 Thumbs.db
 setup_env.sh
+build.sh

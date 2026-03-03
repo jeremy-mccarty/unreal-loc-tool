@@ -1,4 +1,4 @@
-name: Build & Release CSV→JSON App
+name: Build & Release Unreal Loc Tool App
 
 on:
   push:

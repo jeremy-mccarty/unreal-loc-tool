@@ -28,7 +28,7 @@ for folder in [DIST_DIR, BUILD_DIR, RELEASE_DIR, APP_DIR]:
 os.makedirs(RELEASE_DIR, exist_ok=True)
 
 # ---------------- PyInstaller options ----------------
-APP_NAME = "CSVtoJSON"
+APP_NAME = "UnrealLocTool"
 ENTRY_POINT = os.path.join(BASE_DIR, "app", "main.py")
 
 PYINSTALLER_ARGS = [
