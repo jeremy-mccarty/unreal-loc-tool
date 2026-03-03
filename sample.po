@@ -1,0 +1,23 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Unreal Project\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: sample\n"
+"POT-Creation-Date: 2026-03-03 17:33+0000\n"
+
+#. SourceLocation: /Game/UI/MainMenu
+msgctxt "UI.StartButton"
+msgid "Start Game"
+msgstr "Démarrer le jeu"
+
+#. SourceLocation: /Game/UI/MainMenu
+msgctxt "UI.QuitButton"
+msgid "Quit Game"
+msgstr "Quitter le jeu"
+
+#. SourceLocation: /Game/Dialogue/NPC01
+msgctxt "Dialogue.NPCGreeting"
+msgid "Hello traveler!"
+msgstr "Bonjour voyageur !"
+

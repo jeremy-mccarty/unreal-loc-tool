@@ -1,0 +1,4 @@
+Namespace,Key,Source,Translation,SourceLocation
+UI,StartButton,Start Game,Démarrer le jeu,/Game/UI/MainMenu
+UI,QuitButton,Quit Game,Quitter le jeu,/Game/UI/MainMenu
+Dialogue,NPCGreeting,Hello traveler!,Bonjour voyageur !,/Game/Dialogue/NPC01
