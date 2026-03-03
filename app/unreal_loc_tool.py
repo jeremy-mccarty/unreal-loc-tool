@@ -41,14 +41,14 @@ def csv_to_po(csv_path, output_dir=None, project_name="Unreal Project"):
 
     if output_dir:
         os.makedirs(output_dir, exist_ok=True)
-        po_path = os.path.join(output_dir, po_filename)
+        output_path = os.path.join(output_dir, po_filename)
     else:
-        po_path = po_filename
+        output_path = po_filename
 
     seen_keys = set()
 
     with open(csv_path, newline="", encoding="utf-8") as csvfile, open(
-        po_path, "w", encoding="utf-8"
+        output_path, "w", encoding="utf-8"
     ) as pofile:
 
         reader = csv.DictReader(csvfile)
@@ -74,8 +74,10 @@ def csv_to_po(csv_path, output_dir=None, project_name="Unreal Project"):
             pofile.write(f'msgctxt "{combined_key}"\n')
             pofile.write(f'msgid "{escape_po(source)}"\n')
             pofile.write(f'msgstr "{escape_po(translation)}"\n\n')
-
-    print(f"✅ Generated {po_path}")
+            
+    result =f"Generated {output_path}"
+    print(result)
+    return result
 
 
 # ----------------------------
@@ -123,8 +125,10 @@ def po_to_csv(po_path, output_path=None):
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
         writer.writeheader()
         writer.writerows(rows)
-
-    print(f"✅ Generated {output_path}")
+        
+    result =f"Generated {output_path}"
+    print(result)
+    return result
 
 
 # ----------------------------
