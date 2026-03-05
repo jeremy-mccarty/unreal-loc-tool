@@ -1,6 +1,5 @@
 import tkinter as tk
 import sv_ttk
-
 from tkinter import ttk
 from app.views.home_view import HomeView
 
