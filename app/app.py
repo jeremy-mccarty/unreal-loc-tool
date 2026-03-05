@@ -10,7 +10,7 @@ class App(tk.Tk):
         super().__init__()
 
         self.title("Unreal Localization Tool")
-        self.geometry("1080x600")
+        self.geometry("1080x720")
         sv_ttk.set_theme("dark")
 
         # Main container

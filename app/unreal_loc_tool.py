@@ -1,6 +1,4 @@
-import csv
-import sys
-import os
+import csv, sys, os
 from datetime import datetime
 
 
@@ -35,7 +33,9 @@ def write_po_header(outfile, project_name, language):
     )
 
 
-def csv_to_po(csv_path, output_dir=None, project_name="Unreal Project"):
+def csv_to_po(
+    csv_path: str, output_dir: str | None = None, project_name: str = "Unreal Project"
+) -> str:
     language = detect_language_from_filename(csv_path)
     po_filename = f"{language}.po"
 
@@ -88,7 +88,7 @@ def csv_to_po(csv_path, output_dir=None, project_name="Unreal Project"):
 # ----------------------------
 
 
-def po_to_csv(po_path, output_path=None):
+def po_to_csv(po_path: str, output_path: str | None = None) -> str:
     if not output_path:
         output_path = os.path.splitext(po_path)[0] + ".csv"
 
@@ -102,7 +102,7 @@ def po_to_csv(po_path, output_path=None):
             line = line.strip()
             if skip_header:
                 # Header always starts with msgid "" and ends at the first empty #. Key:
-                if line.startswith('#. Key:'):
+                if line.startswith("#. Key:"):
                     skip_header = False
                 continue  # skip everything until header ends
 
@@ -149,13 +149,17 @@ def batch_convert(folder_path, output_dir=None):
     for file in os.listdir(folder_path):
         if file.endswith(".csv"):
             csv_to_po(os.path.join(folder_path, file), output_dir)
-            
-def batch_convert_recursive(folder_path, output_dir=None):
-    
+
+
+def batch_convert_recursive(folder_path, targets, output_dir=None):
+    results = []
     for root, dirs, files in os.walk(folder_path):
         for file in files:
             if file.endswith(".po"):
                 po_path = os.path.join(root, file)
+
+                if po_path not in targets:
+                    continue
 
                 # Optional: maintain relative folder structure in output
                 if output_dir:
@@ -165,9 +169,16 @@ def batch_convert_recursive(folder_path, output_dir=None):
                 else:
                     po_output_dir = None
 
-                po_to_csv(po_path, po_output_dir)
-                
-    result = f"Generated folder"
+                result_path = po_to_csv(po_path, po_output_dir)
+                results.append(result_path)
+
+    n = len(results)
+    if n == 0:
+        result = "Batch convert failed"
+    else:
+        result = f"Batch convert successful for {n} files:\n"
+        result += "\n".join(results) + "\n"
+
     print(result)
     return result
 

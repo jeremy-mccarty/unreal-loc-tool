@@ -1,0 +1,2 @@
+Namespace,Key,Source,Translation,SourceLocation
+LocalizedStrings,npc_greeting,Hello traveler!,Bonjour voyageur !,/Game/Core/StringTables/ST_LocalizedStrings.ST_LocalizedStrings
