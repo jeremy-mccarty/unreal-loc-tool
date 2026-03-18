@@ -60,7 +60,7 @@ class HomeView(ttk.Frame):
 
         # ---------------- Batch Convert ----------------
         ttk.Button(
-            self, text="Batch Convert PO → CSV", command=self.batch_convert
+            self, text="Batch Convert Folder", command=self.batch_convert
         ).grid(row=self.ROW_BATCH, column=0, columnspan=3, sticky="ew", pady=self.TALL)
 
         # ---------------- Target Frame ----------------
@@ -95,9 +95,8 @@ class HomeView(ttk.Frame):
             self.log_frame.log("No folder selected")
             return
 
-        result = ult.batch_convert_recursive(
-            folder_path, self.target_frame.get_selected_targets()
-        )
+        selected_targets = self.target_frame.get_selected_targets()
+        result = ult.batch_convert_recursive(folder_path, selected_targets)
         self.log_frame.log(result)
 
     def select_path(self):
@@ -116,7 +115,7 @@ class HomeView(ttk.Frame):
                 os.path.join(root, f)
                 for root, _, files in os.walk(folder_path)
                 for f in files
-                if f.endswith(".po")
+                if f.endswith(ult.SUPPORTED_BATCH_EXTENSIONS)
             ]
             self.target_frame.fill_targets(targets)
             self.folder_path.set(folder_path)

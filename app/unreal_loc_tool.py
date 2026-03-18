@@ -2,6 +2,9 @@ import csv, sys, os
 from datetime import datetime
 
 
+SUPPORTED_BATCH_EXTENSIONS = (".csv", ".po")
+
+
 # ----------------------------
 # Utility
 # ----------------------------
@@ -14,6 +17,32 @@ def detect_language_from_filename(filename):
 
 def escape_po(text):
     return text.replace('"', r"\"")
+
+
+def build_batch_output_path(input_path, output_dir):
+    if not output_dir:
+        return None
+
+    os.makedirs(output_dir, exist_ok=True)
+    base_name, extension = os.path.splitext(os.path.basename(input_path))
+
+    if extension == ".csv":
+        return output_dir
+    if extension == ".po":
+        return os.path.join(output_dir, f"{base_name}.csv")
+
+    raise ValueError(f"Unsupported file type for batch conversion: {input_path}")
+
+
+def convert_file(input_path, output_dir=None):
+    _, extension = os.path.splitext(input_path)
+
+    if extension == ".csv":
+        return csv_to_po(input_path, build_batch_output_path(input_path, output_dir))
+    if extension == ".po":
+        return po_to_csv(input_path, build_batch_output_path(input_path, output_dir))
+
+    raise ValueError(f"Unsupported file type for conversion: {input_path}")
 
 
 # ----------------------------
@@ -146,32 +175,38 @@ def po_to_csv(po_path: str, output_path: str | None = None) -> str:
 
 
 def batch_convert(folder_path, output_dir=None):
-    for file in os.listdir(folder_path):
-        if file.endswith(".csv"):
-            csv_to_po(os.path.join(folder_path, file), output_dir)
-
-
-def batch_convert_recursive(folder_path, targets, output_dir=None):
     results = []
-    for root, dirs, files in os.walk(folder_path):
-        for file in files:
-            if file.endswith(".po"):
-                po_path = os.path.join(root, file)
+    for file in os.listdir(folder_path):
+        file_path = os.path.join(folder_path, file)
+        if os.path.isfile(file_path) and file.endswith(SUPPORTED_BATCH_EXTENSIONS):
+            results.append(convert_file(file_path, output_dir))
 
-                if po_path not in targets:
+    return summarize_batch_results(results)
+
+
+def batch_convert_recursive(folder_path, targets=None, output_dir=None):
+    results = []
+    selected_targets = set(targets) if targets is not None else None
+    for root, _, files in os.walk(folder_path):
+        for file in files:
+            if file.endswith(SUPPORTED_BATCH_EXTENSIONS):
+                file_path = os.path.join(root, file)
+
+                if selected_targets is not None and file_path not in selected_targets:
                     continue
 
-                # Optional: maintain relative folder structure in output
                 if output_dir:
-                    # compute relative path from folder_path
                     rel_path = os.path.relpath(root, folder_path)
-                    po_output_dir = os.path.join(output_dir, rel_path)
+                    file_output_dir = os.path.join(output_dir, rel_path)
                 else:
-                    po_output_dir = None
+                    file_output_dir = None
 
-                result_path = po_to_csv(po_path, po_output_dir)
-                results.append(result_path)
+                results.append(convert_file(file_path, file_output_dir))
 
+    return summarize_batch_results(results)
+
+
+def summarize_batch_results(results):
     n = len(results)
     if n == 0:
         result = "Batch convert failed"
